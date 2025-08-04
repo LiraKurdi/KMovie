@@ -3,298 +3,283 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>K Movie - Film ve Dizi Platformu</title>
-    
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Swiper.js (Slider için) -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-
-    <!-- Google Fonts: Inter -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
+    <title>KMovie - Ücretsiz Film İzle</title>
     <style>
+        :root {
+            --bg-color: #0f0f0f;
+            --card-color: #1f1f1f;
+            --primary: #e50914;
+            --text: #ffffff;
+            --text-secondary: #aaaaaa;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f0f2f5; /* Google stili açık gri arka plan */
-            color: #333;
+            background-color: var(--bg-color);
+            color: var(--text);
+            padding: 20px;
         }
-        .swiper-button-next, .swiper-button-prev {
-            color: #1a73e8;
-            transition: background-color 0.3s;
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #333;
         }
+        
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .search-box {
+            background: #1f1f1f;
+            border-radius: 20px;
+            padding: 8px 15px;
+            display: flex;
+            align-items: center;
+            width: 250px;
+        }
+        
+        .search-box input {
+            background: transparent;
+            border: none;
+            color: white;
+            width: 100%;
+            outline: none;
+            margin-left: 10px;
+        }
+        
+        .movie-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 20px;
+        }
+        
         .movie-card {
-            transition: transform 0.3s, box-shadow 0.3s;
-            border-radius: 16px; /* Daha yuvarlak köşeler */
-            background-color: white;
+            background: var(--card-color);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s;
             cursor: pointer;
         }
+        
         .movie-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+            transform: scale(1.05);
         }
-        .yakinda-overlay {
-            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            background-color: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(4px);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.2rem; font-weight: 600; color: #333;
-            border-radius: 16px;
+        
+        .movie-poster {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
         }
-        #language-switcher button.active {
-            background-color: #1a73e8; color: white;
+        
+        .movie-info {
+            padding: 12px;
         }
-        .filter-btn.active {
-            background-color: #1a73e8 !important;
-            color: white !important;
-            border-color: #1a73e8 !important;
+        
+        .movie-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
-        /* Modal Stilleri */
-        #movie-modal {
-            transition: opacity 0.3s ease;
+        
+        .movie-year {
+            color: var(--text-secondary);
+            font-size: 14px;
         }
-        #modal-panel {
-            transition: transform 0.3s ease;
+        
+        .category-title {
+            font-size: 20px;
+            margin: 25px 0 15px 0;
+            font-weight: 500;
+        }
+        
+        .telegram-player {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .close-player {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 30px;
+            cursor: pointer;
+            color: var(--primary);
+        }
+        
+        .telegram-video {
+            width: 90%;
+            max-width: 800px;
+            height: auto;
+            max-height: 80vh;
         }
     </style>
 </head>
-<body class="antialiased">
-
-    <!-- Ana Konteyner -->
-    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-
-        <!-- Başlık, Arama ve Dil Seçimi Bölümü -->
-        <header class="flex flex-col md:flex-row justify-between items-center mb-8 gap-6">
-            <h1 class="text-4xl md:text-5xl font-extrabold text-gray-800">
-                K <span class="text-blue-600">M</span><span class="text-red-600">o</span><span class="text-yellow-500">v</span><span class="text-green-600">i</span>e
-            </h1>
-            <div class="relative w-full md:w-72 order-3 md:order-2">
-                <input type="text" id="searchInput" class="w-full bg-white border-2 border-gray-300 text-gray-800 rounded-full py-2 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-blue-500" data-lang-placeholder="search_placeholder">
-                <svg class="w-5 h-5 text-gray-400 absolute top-1/2 left-3 transform -translate-y-1/2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-            </div>
-            <div id="language-switcher" class="flex items-center bg-gray-200 rounded-full p-1 order-2 md:order-3">
-                <button data-lang-btn="ku" class="px-4 py-1 text-sm font-semibold text-gray-600 rounded-full">Kurdî</button>
-                <button data-lang-btn="tr" class="px-4 py-1 text-sm font-semibold text-gray-600 rounded-full">Türkçe</button>
-                <button data-lang-btn="en" class="px-4 py-1 text-sm font-semibold text-gray-600 rounded-full">English</button>
-            </div>
-        </header>
-
-        <!-- Filtreleme Butonları -->
-        <div id="filter-container" class="mb-8 flex flex-wrap gap-2">
-            <!-- JS ile doldurulacak -->
+<body>
+    <header>
+        <div class="logo">KMOVIE</div>
+        <div class="search-box">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M19 19L13 13M15 8C15 11.866 11.866 15 8 15C4.13401 15 1 11.866 1 8C1 4.13401 4.13401 1 8 1C11.866 1 15 4.13401 15 8Z" stroke="#AAAAAA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <input type="text" placeholder="Film ara...">
         </div>
-
-        <main id="movie-sections">
-            <!-- Kategoriler JS ile oluşturulacak -->
-        </main>
-
-        <div id="noResults" class="hidden text-center py-10"><h3 class="text-2xl font-semibold text-gray-500" data-lang="no_results_title"></h3><p class="text-gray-600" data-lang="no_results_desc"></p></div>
-        <footer class="text-center mt-12 pt-6 border-t border-gray-200"><p class="text-gray-500">Powered by <a href="#" class="font-semibold text-gray-600 hover:text-blue-600">@LiraKurdi</a></p></footer>
-    </div>
-
-    <!-- Film Detay Modalı -->
-    <div id="movie-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 hidden opacity-0">
-        <div id="modal-panel" class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col md:flex-row overflow-hidden transform scale-95">
-            <img id="modal-img" src="" alt="Film Posteri" class="w-full md:w-1/3 h-auto object-cover">
-            <div class="p-6 md:p-8 flex flex-col flex-1 overflow-y-auto">
-                <h2 id="modal-title" class="text-3xl font-bold text-gray-900 mb-2"></h2>
-                <div class="flex items-center gap-4 text-sm text-gray-500 mb-4">
-                    <span id="modal-year"></span>
-                    <span class="font-bold text-blue-600" id="modal-genre"></span>
-                </div>
-                <p id="modal-desc" class="text-gray-700 leading-relaxed mb-6 flex-grow"></p>
-                <div class="mt-auto flex flex-col sm:flex-row gap-3">
-                    <a id="modal-play-btn" href="#" target="_blank" class="w-full sm:w-auto flex-1 text-center bg-blue-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-blue-700 transition-transform hover:scale-105" data-lang="watch_now"></a>
-                    <button id="modal-close-btn" class="w-full sm:w-auto bg-gray-200 text-gray-800 font-bold py-3 px-6 rounded-lg hover:bg-gray-300" data-lang="close"></button>
-                </div>
-            </div>
+    </header>
+    
+    <main>
+        <h2 class="category-title">Kürtçe Filmler</h2>
+        <div class="movie-grid" id="kurdish-movies">
+            <!-- Filmler buraya JS ile eklenecek -->
         </div>
+        
+        <h2 class="category-title">Popüler Filmler</h2>
+        <div class="movie-grid" id="popular-movies">
+            <!-- Filmler buraya JS ile eklenecek -->
+        </div>
+    </main>
+    
+    <div class="telegram-player" id="player">
+        <span class="close-player" onclick="closePlayer()">×</span>
+        <video controls class="telegram-video" id="telegram-video">
+            Tarayıcınız video oynatmayı desteklemiyor.
+        </video>
     </div>
-
 
     <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // --- VERİ VE ÇEVİRİLER ---
-        const translations = {
-            ku: { page_title: "K Movie - Platforma Fîlman", search_placeholder: "Li fîlman bigere...", coming_soon: "PÊŞ DE", no_results_title: "Fîlmek nehat dîtin.", no_results_desc: "Peyveke din biceribîne.", all: "Hemû", kurdish: "Kurdî", harry_potter: "Harry Potter", comedy: "Komedî", drama: "Drama", watch_now: "Niha Temaşe Bike", close: "Bigire", year: "Sal", desc: { kobane: "DAIŞ'ê li dijî Kobanê êrîş pêk anî û berxwedana li hemberî van êrîşan vedibêje.", turtles: "Çîroka zarokên ku li kampeke penaberan a Kurdan mayînan berhev dikin.", bekas: "Xewnên du birayên ku dixwazin biçin Amerîkayê û alîkariyê ji Superman bixwazin.", postal: "Behsa kiryarên dermirovî yên li Girtîgeha Amedê ya piştî derbeya 12ê Îlonê dike.", july14: "Çalakiya rojiya mirinê ya 14ê Tîrmehê ya li Girtîgeha Amedê vedibêje." } },
-            tr: { page_title: "K Movie - Film Platformu", search_placeholder: "Film ara...", coming_soon: "YAKINDA", no_results_title: "Film bulunamadı.", no_results_desc: "Farklı bir anahtar kelime deneyin.", all: "Tümü", kurdish: "Kürtçe Temalı", harry_potter: "Harry Potter", comedy: "Komedi", drama: "Drama", watch_now: "Hemen İzle", close: "Kapat", year: "Yıl", desc: { kobane: "DAİŞ'in Kobanê'ye yönelik saldırılarını ve bu saldırılara karşı gelişen direnişi konu alır.", turtles: "Bir Kürt mülteci kampında mayın toplayarak geçinen çocukların dokunaklı öyküsü.", bekas: "Süpermen'den yardım istemek için Amerika'ya gitme hayali kuran iki kardeşin yolculuğu.", postal: "12 Eylül darbesi sonrası Diyarbakır Cezaevi'nde yaşanan insanlık dışı uygulamalar.", july14: "Diyarbakır Cezaevi'ndeki tarihi 14 Temmuz Ölüm Orucu Direnişi'nin hikayesi." } },
-            en: { page_title: "K Movie - Movie Platform", search_placeholder: "Search for movies...", coming_soon: "COMING SOON", no_results_title: "No movies found.", no_results_desc: "Please try a different keyword.", all: "All", kurdish: "Kurdish Themed", harry_potter: "Harry Potter", comedy: "Comedy", drama: "Drama", watch_now: "Watch Now", close: "Close", year: "Year", desc: { kobane: "It tells the story of the attacks by ISIS on Kobanê and the resistance that developed against these attacks.", turtles: "The touching story of children who make a living by collecting mines in a Kurdish refugee camp.", bekas: "The journey of two brothers who dream of going to America to ask Superman for help.", postal: "The inhumane practices in Diyarbakır Prison after the September 12 coup.", july14: "The story of the historic July 14 Death Fast Resistance in Diyarbakır Prison." } }
+        // Film veritabanı - Telegram'daki video dosya ID'leri
+        const movies = {
+            kurdish: [
+                { 
+                    id: "kobane",
+                    title: "Kobane", 
+                    year: "2019",
+                    poster: "https://via.placeholder.com/300x450/1a1a1a/ffffff?text=Kobane",
+                    file_id: "BAACAgIAAxkBAAIB...", // Telegram file_id
+                    video_url: "https://t.me/c/2587343787/3" // Fallback URL
+                },
+                { 
+                    id: "kaplumbaga",
+                    title: "Kaplumbağalar da Uçar", 
+                    year: "2004",
+                    poster: "https://via.placeholder.com/300x450/1a1a1a/ffffff?text=Kaplumbağalar",
+                    file_id: "BAACAgIAAxkBAAIB...",
+                    video_url: "https://t.me/c/2587343787/4"
+                },
+                { 
+                    id: "superman",
+                    title: "Neredesin Superman", 
+                    year: "2012",
+                    poster: "https://via.placeholder.com/300x450/1a1a1a/ffffff?text=Superman",
+                    file_id: "BAACAgIAAxkBAAIB...",
+                    video_url: "https://t.me/c/2587343787/5"
+                }
+            ],
+            popular: [
+                { 
+                    id: "bloody",
+                    title: "Kanlı Postal", 
+                    year: "2020",
+                    poster: "https://via.placeholder.com/300x450/1a1a1a/ffffff?text=Kanlı+Postal",
+                    file_id: "BAACAgIAAxkBAAIB...",
+                    video_url: "https://t.me/c/2587343787/6"
+                },
+                { 
+                    id: "diyarbakir",
+                    title: "14 Temmuz Diyarbakır", 
+                    year: "2018",
+                    poster: "https://via.placeholder.com/300x450/1a1a1a/ffffff?text=14+Temmuz",
+                    file_id: "BAACAgIAAxkBAAIB...",
+                    video_url: "https://t.me/c/2587343787/7"
+                }
+            ]
         };
 
-        const movies = [
-            { id: 'kobane', year: 2022, genre: 'kurdish', link: 'https://t.me/LKURDMovieBot?start=play_kobane', img: 'https://placehold.co/500x750/1a202c/ffffff?text=Kobane', isAvailable: true },
-            { id: 'turtles', year: 2004, genre: 'kurdish', link: 'https://t.me/LKURDMovieBot?start=play_turtles', img: 'https://placehold.co/500x750/2c3e50/ffffff?text=Kaplumbağalar+da+Uçar', isAvailable: true },
-            { id: 'bekas', year: 2012, genre: 'kurdish', link: 'https://t.me/LKURDMovieBot?start=play_bekas', img: 'https://placehold.co/500x750/e74c3c/ffffff?text=Neredesin+Superman', isAvailable: true },
-            { id: 'postal', year: 2019, genre: 'kurdish', link: 'https://t.me/LKURDMovieBot?start=play_postal', img: 'https://placehold.co/500x750/c0392b/ffffff?text=Kanlı+Postal', isAvailable: true },
-            { id: 'july14', year: 2017, genre: 'kurdish', link: 'https://t.me/LKURDMovieBot?start=play_july14', img: 'https://placehold.co/500x750/8e44ad/ffffff?text=14+Temmuz', isAvailable: true },
-            { id: 'hp1', year: 2001, genre: 'harry_potter', link: '#', img: 'https://placehold.co/500x750/600519/ffffff?text=Felsefe+Taşı', isAvailable: false },
-            { id: 'hp2', year: 2002, genre: 'harry_potter', link: '#', img: 'https://placehold.co/500x750/044127/ffffff?text=Sırlar+Odası', isAvailable: false },
-            { id: 'hp3', year: 2004, genre: 'harry_potter', link: '#', img: 'https://placehold.co/500x750/0f2b56/ffffff?text=Azkaban+Tutsağı', isAvailable: false },
-            { id: 'com1', year: 2024, genre: 'comedy', link: '#', img: 'https://placehold.co/500x750/f1c40f/000000?text=Komedi+1', isAvailable: false },
-            { id: 'dra1', year: 2024, genre: 'drama', link: '#', img: 'https://placehold.co/500x750/3498db/ffffff?text=Drama+1', isAvailable: false },
-        ];
-        
-        const genres = ['all', 'kurdish', 'harry_potter', 'comedy', 'drama'];
-        let currentLang = localStorage.getItem('language') || 'tr';
-        let swipers = {};
-
-        function setLanguage(lang) {
-            currentLang = lang;
-            localStorage.setItem('language', lang);
-            document.documentElement.lang = lang;
-            document.title = translations[lang].page_title;
-
-            document.querySelectorAll('[data-lang]').forEach(el => {
-                el.textContent = translations[lang][el.getAttribute('data-lang')];
+        // Film kartlarını oluştur
+        function renderMovies() {
+            const kurdishGrid = document.getElementById('kurdish-movies');
+            const popularGrid = document.getElementById('popular-movies');
+            
+            movies.kurdish.forEach(movie => {
+                kurdishGrid.innerHTML += createMovieCard(movie);
             });
-            document.querySelectorAll('[data-lang-placeholder]').forEach(el => {
-                el.placeholder = translations[lang][el.getAttribute('data-lang-placeholder')];
+            
+            movies.popular.forEach(movie => {
+                popularGrid.innerHTML += createMovieCard(movie);
             });
-            document.querySelectorAll('#language-switcher button').forEach(btn => {
-                btn.classList.toggle('active', btn.getAttribute('data-lang-btn') === lang);
+            
+            // Tıklama eventlerini ekle
+            document.querySelectorAll('.movie-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    const movieId = this.getAttribute('data-id');
+                    playMovie(movieId);
+                });
             });
-            renderFilters();
-            renderContent();
         }
-
+        
+        // Film kartı HTML oluştur
         function createMovieCard(movie) {
-            const title = translations[currentLang][movie.genre] || movie.id;
-            const overlay = movie.isAvailable ? '' : `<div class="yakinda-overlay">${translations[currentLang].coming_soon}</div>`;
             return `
-                <div class="swiper-slide movie-item" data-movie-id="${movie.id}" data-genre="${movie.genre}">
-                    <div class="block relative movie-card bg-white shadow-md">
-                        <img src="${movie.img}" alt="${title}" class="w-full h-auto object-cover rounded-t-lg">
-                        ${overlay}
+                <div class="movie-card" data-id="${movie.id}">
+                    <img src="${movie.poster}" alt="${movie.title}" class="movie-poster">
+                    <div class="movie-info">
+                        <div class="movie-title">${movie.title}</div>
+                        <div class="movie-year">${movie.year}</div>
                     </div>
-                </div>`;
+                </div>
+            `;
         }
         
-        function renderFilters() {
-            const container = document.getElementById('filter-container');
-            container.innerHTML = genres.map(genre => `
-                <button class="filter-btn px-4 py-2 text-sm font-semibold bg-white text-gray-700 border border-gray-300 rounded-full transition" data-filter="${genre}">
-                    ${translations[currentLang][genre]}
-                </button>
-            `).join('');
-            container.querySelector('[data-filter="all"]').classList.add('active');
+        // Film oynatıcıyı aç
+        function playMovie(movieId) {
+            // Tüm filmleri birleştirip arasından seç
+            const allMovies = [...movies.kurdish, ...movies.popular];
+            const movie = allMovies.find(m => m.id === movieId);
             
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    document.querySelector('.filter-btn.active').classList.remove('active');
-                    btn.classList.add('active');
-                    filterMovies(btn.dataset.filter);
-                });
-            });
-        }
-
-        function renderContent() {
-            const mainContainer = document.getElementById('movie-sections');
-            mainContainer.innerHTML = ''; // Clear existing
-            
-            genres.slice(1).forEach(genre => {
-                const moviesOfGenre = movies.filter(m => m.genre === genre);
-                if (moviesOfGenre.length === 0) return;
-
-                const section = document.createElement('section');
-                section.className = 'movie-category mb-12';
-                section.dataset.genre = genre;
-                section.innerHTML = `
-                    <h2 class="text-2xl font-bold text-gray-800 mb-4">${translations[currentLang][genre]}</h2>
-                    <div class="swiper">
-                        <div class="swiper-wrapper">
-                            ${moviesOfGenre.map(createMovieCard).join('')}
-                        </div>
-                        <div class="swiper-button-next"></div><div class="swiper-button-prev"></div>
-                    </div>`;
-                mainContainer.appendChild(section);
-            });
-            
-            initializeSwipers();
-            addCardClickListeners();
-        }
-        
-        function initializeSwipers() {
-            Object.values(swipers).forEach(swiper => swiper.destroy());
-            swipers = {};
-            document.querySelectorAll('.swiper').forEach((el, index) => {
-                swipers[index] = new Swiper(el, {
-                    slidesPerView: 2, spaceBetween: 15,
-                    navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
-                    breakpoints: { 640: { slidesPerView: 3, spaceBetween: 20 }, 768: { slidesPerView: 4, spaceBetween: 20 }, 1024: { slidesPerView: 5, spaceBetween: 30 }, 1280: { slidesPerView: 6, spaceBetween: 30 } }
-                });
-            });
-        }
-        
-        function filterMovies(genre) {
-            document.querySelectorAll('.movie-category').forEach(section => {
-                section.style.display = (genre === 'all' || section.dataset.genre === genre) ? 'block' : 'none';
-            });
-            Object.values(swipers).forEach(swiper => swiper.update());
-        }
-
-        function openModal(movieId) {
-            const movie = movies.find(m => m.id === movieId);
             if (!movie) return;
-
-            document.getElementById('modal-title').textContent = translations[currentLang][movie.id] || movie.id;
-            document.getElementById('modal-img').src = movie.img;
-            document.getElementById('modal-year').textContent = `${translations[currentLang].year}: ${movie.year}`;
-            document.getElementById('modal-genre').textContent = translations[currentLang][movie.genre];
-            document.getElementById('modal-desc').textContent = translations[currentLang].desc[movie.id] || '';
             
-            const playBtn = document.getElementById('modal-play-btn');
-            if (movie.isAvailable) {
-                playBtn.href = movie.link;
-                playBtn.classList.remove('hidden');
-            } else {
-                playBtn.classList.add('hidden');
-            }
-
-            const modal = document.getElementById('movie-modal');
-            modal.classList.remove('hidden');
-            setTimeout(() => {
-                modal.classList.add('opacity-100');
-                document.getElementById('modal-panel').classList.remove('scale-95');
-            }, 10);
+            // Telegram'ın doğrudan oynatma linki
+            const telegramVideoUrl = `https://api.telegram.org/file/bot7774406392:AAExwMTeYwUoAsTE6PKZDyLSBCFjnCvs8to/${movie.file_id}`;
+            
+            // Fallback olarak kanal linki
+            const videoPlayer = document.getElementById('telegram-video');
+            videoPlayer.src = telegramVideoUrl;
+            videoPlayer.load();
+            
+            // Oynatıcıyı göster
+            document.getElementById('player').style.display = 'flex';
         }
-
-        function closeModal() {
-            const modal = document.getElementById('movie-modal');
-            modal.classList.remove('opacity-100');
-            document.getElementById('modal-panel').classList.add('scale-95');
-            setTimeout(() => modal.classList.add('hidden'), 300);
-        }
-
-        function addCardClickListeners() {
-            document.querySelectorAll('.movie-item').forEach(card => {
-                card.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    openModal(card.dataset.movieId);
-                });
-            });
-        }
-
-        // --- BAŞLATMA ---
-        setLanguage(currentLang); // Initial load
         
-        document.getElementById('language-switcher').addEventListener('click', (e) => {
-            if (e.target.tagName === 'BUTTON') setLanguage(e.target.dataset.langBtn);
-        });
-
-        document.getElementById('searchInput').addEventListener('input', (e) => {
-             const searchTerm = e.target.value.toLowerCase().trim();
-             // Arama fonksiyonu buraya entegre edilebilir veya filtreleme ile birleştirilebilir.
-        });
+        // Oynatıcıyı kapat
+        function closePlayer() {
+            const videoPlayer = document.getElementById('telegram-video');
+            videoPlayer.pause();
+            videoPlayer.src = '';
+            document.getElementById('player').style.display = 'none';
+        }
         
-        document.getElementById('modal-close-btn').addEventListener('click', closeModal);
-        document.getElementById('movie-modal').addEventListener('click', (e) => {
-            if (e.target.id === 'movie-modal') closeModal(); // Sadece arka plana tıklayınca kapat
-        });
-    });
+        // Sayfa yüklendiğinde filmleri render et
+        window.onload = renderMovies;
     </script>
 </body>
 </html>
