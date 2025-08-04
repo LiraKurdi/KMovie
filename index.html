@@ -4,18 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>K Movie - Film ve Dizi Platformu</title>
-   
+    
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-   
+    
     <!-- Swiper.js (Slider için) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
     <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-   
+    
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -69,27 +70,32 @@
     </style>
 </head>
 <body class="antialiased">
+
     <!-- Ana Konteyner -->
     <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
         <!-- Başlık, Arama ve Dil Seçimi Bölümü -->
         <header class="flex flex-col md:flex-row justify-between items-center mb-10 gap-6">
             <h1 class="text-4xl md:text-5xl font-extrabold text-white">
                 K <span class="text-blue-500">M</span><span class="text-red-500">o</span><span class="text-yellow-400">v</span><span class="text-green-500">i</span>e
             </h1>
-           
+            
             <div class="relative w-full md:w-72 order-3 md:order-2">
                 <input type="text" id="searchInput" class="w-full bg-gray-800 border border-gray-700 text-white rounded-full py-2 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-blue-500" data-lang-placeholder="search_placeholder">
                 <svg class="w-5 h-5 text-gray-400 absolute top-1/2 left-3 transform -translate-y-1/2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
             </div>
+
             <div id="language-switcher" class="flex items-center bg-gray-800 rounded-full p-1 order-2 md:order-3">
                 <button data-lang-btn="ku" class="px-4 py-1 text-sm font-semibold text-gray-300 rounded-full">Kurdî</button>
                 <button data-lang-btn="tr" class="px-4 py-1 text-sm font-semibold text-gray-300 rounded-full">Türkçe</button>
                 <button data-lang-btn="en" class="px-4 py-1 text-sm font-semibold text-gray-300 rounded-full">English</button>
             </div>
         </header>
+
         <main id="movie-sections">
+
             <!-- Kategori: Kürtçe Temalı Filmler -->
             <section class="movie-category mb-12">
                 <h2 class="text-2xl font-bold text-white mb-4" data-lang="kurdish_thema_movies"></h2>
@@ -100,8 +106,9 @@
                     <div class="swiper-button-next"></div><div class="swiper-button-prev"></div>
                 </div>
             </section>
+
             <!-- Diğer Kategoriler (Yakında) -->
-            <section class="movie-category mb-12">
+             <section class="movie-category mb-12">
                 <h2 class="text-2xl font-bold text-white mb-4" data-lang="harry_potter_series"></h2>
                 <div class="swiper generic-swiper">
                     <div class="swiper-wrapper">
@@ -110,7 +117,7 @@
                     <div class="swiper-button-next"></div><div class="swiper-button-prev"></div>
                 </div>
             </section>
-           
+            
             <section class="movie-category mb-12">
                 <h2 class="text-2xl font-bold text-white mb-4" data-lang="comedy"></h2>
                 <div class="swiper generic-swiper">
@@ -120,7 +127,8 @@
                     <div class="swiper-button-next"></div><div class="swiper-button-prev"></div>
                 </div>
             </section>
-            <section class="movie-category mb-12">
+
+             <section class="movie-category mb-12">
                 <h2 class="text-2xl font-bold text-white mb-4" data-lang="drama"></h2>
                 <div class="swiper generic-swiper">
                     <div class="swiper-wrapper">
@@ -130,14 +138,17 @@
                 </div>
             </section>
         </main>
+
         <div id="noResults" class="hidden text-center py-10">
             <h3 class="text-2xl font-semibold text-gray-400" data-lang="no_results_title"></h3>
             <p class="text-gray-500" data-lang="no_results_desc"></p>
         </div>
+
         <footer class="text-center mt-12 pt-6 border-t border-gray-800">
             <p class="text-gray-500">Powered by <a href="#" class="font-semibold text-gray-400 hover:text-white">@LiraKurdi</a></p>
         </footer>
     </div>
+
     <script>
     document.addEventListener('DOMContentLoaded', function () {
         // --- VERİ VE ÇEVİRİLER ---
@@ -176,13 +187,14 @@
                 no_results_desc: "Please try a different keyword."
             }
         };
+
         const movies = {
             kurdish: [
-                { id: 'kobane', titles: { ku: 'Kobanê', tr: 'Kobane', en: 'Kobane' }, link: 'https://t.me/LKURDMovieBot?start=watch_kobane', img: 'https://placehold.co/500x750/1a202c/ffffff?text=Kobane' },
-                { id: 'turtles', titles: { ku: 'Kûsî Jî Dikarin Bifirin', tr: 'Kaplumbağalar da Uçar', en: 'Turtles Can Fly' }, link: 'https://t.me/LKURDMovieBot?start=watch_turtles', img: 'https://placehold.co/500x750/2c3e50/ffffff?text=Kaplumbağalar+da+Uçar' },
-                { id: 'bekas', titles: { ku: 'Bekas', tr: 'Neredesin Superman', en: 'Bekas' }, link: 'https://t.me/LKURDMovieBot?start=watch_bekas', img: 'https://placehold.co/500x750/e74c3c/ffffff?text=Neredesin+Superman' },
-                { id: 'postal', titles: { ku: 'Postala Xwînî', tr: 'Kanlı Postal', en: 'Bloody Post' }, link: 'https://t.me/LKURDMovieBot?start=watch_postal', img: 'https://placehold.co/500x750/c0392b/ffffff?text=Kanlı+Postal' },
-                { id: 'july14', titles: { ku: '14ê Tîrmehê', tr: '14 Temmuz', en: '14th of July' }, link: 'https://t.me/LKURDMovieBot?start=watch_july14', img: 'https://placehold.co/500x750/8e44ad/ffffff?text=14+Temmuz' },
+                { id: 'kobane', titles: { ku: 'Kobanê', tr: 'Kobane', en: 'Kobane' }, link: 'https://t.me/c/2587343787/3', img: 'https://placehold.co/500x750/1a202c/ffffff?text=Kobane' },
+                { id: 'turtles', titles: { ku: 'Kûsî Jî Dikarin Bifirin', tr: 'Kaplumbağalar da Uçar', en: 'Turtles Can Fly' }, link: 'https://t.me/c/2587343787/4', img: 'https://placehold.co/500x750/2c3e50/ffffff?text=Kaplumbağalar+da+Uçar' },
+                { id: 'bekas', titles: { ku: 'Bekas', tr: 'Neredesin Superman', en: 'Bekas' }, link: 'https://t.me/c/2587343787/5', img: 'https://placehold.co/500x750/e74c3c/ffffff?text=Neredesin+Superman' },
+                { id: 'postal', titles: { ku: 'Postala Xwînî', tr: 'Kanlı Postal', en: 'Bloody Post' }, link: 'https://t.me/c/2587343787/6', img: 'https://placehold.co/500x750/c0392b/ffffff?text=Kanlı+Postal' },
+                { id: 'july14', titles: { ku: '14ê Tîrmehê', tr: '14 Temmuz', en: '14th of July' }, link: 'https://t.me/c/2587343787/7', img: 'https://placehold.co/500x750/8e44ad/ffffff?text=14+Temmuz' },
             ],
             harry_potter: [
                 { id: 'hp1', titles: { ku: 'Harry Potter û Kevirê Felsefeyê', tr: 'Harry Potter ve Felsefe Taşı', en: 'Harry Potter and the Sorcerer\'s Stone' }, link: '#', img: 'https://placehold.co/500x750/600519/ffffff?text=Felsefe+Taşı' },
@@ -198,13 +210,16 @@
                 { id: 'dra2', titles: { ku: 'Fîlma Drama 2', tr: 'Drama Filmi 2', en: 'Drama Movie 2' }, link: '#', img: 'https://placehold.co/500x750/2980b9/ffffff?text=Drama+2' },
             ]
         };
+
         let currentLang = localStorage.getItem('language') || 'tr';
+
         // --- FONKSİYONLAR ---
+
         function createMovieCard(movie, lang, isAvailable) {
             const linkTarget = isAvailable ? 'target="_blank"' : '';
             const overlay = isAvailable ? '' : `<div class="yakinda-overlay">${translations[lang].coming_soon}</div>`;
             const title = movie.titles[lang] || movie.titles['en'];
-           
+            
             return `
                 <div class="swiper-slide movie-item" data-titles='${JSON.stringify(movie.titles)}'>
                     <a href="${movie.link}" ${linkTarget} class="block relative movie-card bg-gray-800">
@@ -214,25 +229,32 @@
                 </div>
             `;
         }
+
         function renderMovies() {
             const lang = currentLang;
-           
+            
             // Mevcut filmler
             const kurdishContainer = document.querySelector('.kurdish-swiper .swiper-wrapper');
             kurdishContainer.innerHTML = movies.kurdish.map(movie => createMovieCard(movie, lang, true)).join('');
+
             // Yakında gelecekler
             const hpContainer = document.querySelector('[data-lang="harry_potter_series"]').nextElementSibling.querySelector('.swiper-wrapper');
             hpContainer.innerHTML = movies.harry_potter.map(movie => createMovieCard(movie, lang, false)).join('');
+
             const comedyContainer = document.querySelector('[data-lang="comedy"]').nextElementSibling.querySelector('.swiper-wrapper');
             comedyContainer.innerHTML = movies.comedy.map(movie => createMovieCard(movie, lang, false)).join('');
+
             const dramaContainer = document.querySelector('[data-lang="drama"]').nextElementSibling.querySelector('.swiper-wrapper');
             dramaContainer.innerHTML = movies.drama.map(movie => createMovieCard(movie, lang, false)).join('');
+
             // Slider'ları güncelle
-            Object.values(swipers).forEach(swiper => swiper.update());
+             Object.values(swipers).forEach(swiper => swiper.update());
         }
+
         function setLanguage(lang) {
             currentLang = lang;
             localStorage.setItem('language', lang);
+
             // Metinleri çevir
             document.querySelectorAll('[data-lang]').forEach(el => {
                 const key = el.getAttribute('data-lang');
@@ -243,6 +265,7 @@
                 el.placeholder = translations[lang][key];
             });
             document.title = translations[lang].page_title;
+
             // Dil butonu stilini ayarla
             document.querySelectorAll('#language-switcher button').forEach(btn => {
                 btn.classList.remove('active');
@@ -250,18 +273,21 @@
                     btn.classList.add('active');
                 }
             });
+
             // Filmleri yeniden render et
             renderMovies();
         }
+
         function handleSearch() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
             let totalMatches = 0;
+
             document.querySelectorAll('.movie-category').forEach(category => {
                 let categoryMatches = 0;
                 category.querySelectorAll('.movie-item').forEach(item => {
                     const titles = JSON.parse(item.getAttribute('data-titles'));
                     const titleInCurrentLang = titles[currentLang].toLowerCase();
-                   
+                    
                     if (titleInCurrentLang.includes(searchTerm)) {
                         item.style.display = 'block';
                         categoryMatches++;
@@ -269,15 +295,17 @@
                         item.style.display = 'none';
                     }
                 });
+
                 category.style.display = categoryMatches > 0 ? 'block' : 'none';
                 totalMatches += categoryMatches;
             });
-           
+            
             Object.values(swipers).forEach(swiper => swiper.update());
             document.getElementById('noResults').style.display = totalMatches === 0 && searchTerm.length > 0 ? 'block' : 'none';
         }
+
         // --- BAŞLATMA ---
-       
+        
         // Slider'ları başlat
         const swipers = {};
         document.querySelectorAll('.swiper').forEach((el, index) => {
@@ -287,6 +315,7 @@
                 breakpoints: { 640: { slidesPerView: 3, spaceBetween: 20 }, 768: { slidesPerView: 4, spaceBetween: 20 }, 1024: { slidesPerView: 5, spaceBetween: 30 }, 1280: { slidesPerView: 6, spaceBetween: 30 } }
             });
         });
+
         // Event Listeners
         document.getElementById('language-switcher').addEventListener('click', (e) => {
             if (e.target.tagName === 'BUTTON') {
@@ -294,7 +323,9 @@
                 setLanguage(lang);
             }
         });
+
         document.getElementById('searchInput').addEventListener('input', handleSearch);
+
         // Sayfa ilk yüklendiğinde dili ayarla
         setLanguage(currentLang);
     });
