@@ -28,6 +28,7 @@
             --surface-color: #ffffff;
             --accent-color: #1a73e8;
             --accent-bg-color: #e8f0fe;
+            --border-color: #dadce0;
         }
 
         body {
@@ -38,150 +39,228 @@
             -moz-osx-font-smoothing: grayscale;
         }
 
+        /* Swiper Buton Stilleri */
         .swiper-button-next, .swiper-button-prev {
             color: var(--text-primary);
-            background-color: rgba(255, 255, 255, 0.9);
-            border: 1px solid #dadce0;
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            transition: background-color 0.3s, box-shadow 0.3s;
+            width: 44px;
+            height: 44px;
+            transition: background-color 0.3s, box-shadow 0.3s, opacity 0.3s;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            top: 45%;
         }
+        .swiper-button-next { right: -22px; }
+        .swiper-button-prev { left: -22px; }
+
+        @media (max-width: 768px) {
+            .swiper-button-next, .swiper-button-prev {
+                display: none;
+            }
+        }
+
         .swiper-button-next:hover, .swiper-button-prev:hover {
             background-color: #f1f3f4;
             box-shadow: 0 2px 6px rgba(0,0,0,0.15);
         }
         .swiper-button-next::after, .swiper-button-prev::after {
-            font-size: 18px;
+            font-size: 20px;
             font-weight: 700;
         }
         .swiper-button-disabled {
-            opacity: 0.4;
+            opacity: 0;
             pointer-events: none;
         }
         
-        #language-switcher button.active {
-            background-color: var(--accent-bg-color);
-            color: var(--accent-color);
-        }
+        /* Modal ve Offcanvas için geçiş efektleri */
+        .transition-all { transition: all 0.3s ease-in-out; }
+
+        /* Scrollbar stilleri */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #b3b3b3; }
     </style>
 </head>
 <body class="antialiased">
 
+    <!-- Ana Kapsayıcı -->
     <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
 
-        <header class="flex flex-col md:flex-row justify-between items-center mb-8 md:mb-12 gap-5">
-            <h1 class="text-3xl font-bold tracking-tighter">
-                K <span style="color: #4285F4;">M</span><span style="color: #DB4437;">o</span><span style="color: #F4B400;">v</span><span style="color: #0F9D58;">i</span>e
-            </h1>
+        <!-- Header -->
+        <header class="flex justify-between items-center mb-6 md:mb-8">
+            <!-- Logo -->
+            <a href="#" class="flex items-center gap-2 flex-shrink-0">
+                <img src="assets/images/logo.png" alt="K Movie Logo" class="h-10 w-10" onerror="this.style.display='none'">
+                <span class="text-2xl font-bold tracking-tighter text-gray-500 hidden sm:block">Movie</span>
+            </a>
             
-            <div class="relative w-full md:w-96 order-3 md:order-2">
-                <span class="material-symbols-outlined w-5 h-5 text-gray-500 absolute top-1/2 left-4 transform -translate-y-1/2 pointer-events-none">search</span>
-                <input type="text" id="searchInput" class="w-full bg-[#f1f3f4] border border-transparent text-gray-800 rounded-full py-2.5 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-[var(--accent-color)] focus:bg-white" data-lang-placeholder="search_placeholder">
+            <!-- Dil Dropdown Menüsü -->
+            <div class="relative" id="language-dropdown">
+                <button id="language-dropdown-toggle" class="flex items-center gap-2 bg-white border border-gray-300 rounded-full py-2 px-3 hover:bg-gray-100 transition-colors">
+                    <!-- Seçili dil buraya gelecek -->
+                </button>
+                <div id="language-dropdown-menu" class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border z-20 hidden transition-all opacity-0 transform -translate-y-2">
+                    <!-- Dil seçenekleri buraya gelecek -->
+                </div>
             </div>
-
-            <nav id="language-switcher" class="flex items-center bg-gray-200 rounded-full p-1 order-2 md:order-3">
-                <button data-lang-btn="ku" class="px-4 py-1.5 text-sm font-medium text-gray-700 rounded-full transition-colors">Kurdî</button>
-                <button data-lang-btn="tr" class="px-4 py-1.5 text-sm font-medium text-gray-700 rounded-full transition-colors">Türkçe</button>
-                <button data-lang-btn="en" class="px-4 py-1.5 text-sm font-medium text-gray-700 rounded-full transition-colors">English</button>
-            </nav>
         </header>
 
+        <!-- Arama ve Filtreleme Bölümü -->
+        <div class="mb-8 md:mb-12">
+            <div class="flex items-center gap-2 w-full max-w-lg mx-auto bg-white p-2 rounded-full shadow-md border border-gray-200">
+                <div class="relative flex-grow flex items-center">
+                    <span class="material-symbols-outlined w-5 h-5 text-gray-500 absolute left-4 pointer-events-none">search</span>
+                    <input type="text" id="searchInput" class="w-full bg-transparent text-gray-800 py-1.5 pl-12 pr-4 focus:outline-none" placeholder="Film ara...">
+                </div>
+                <button id="filter-btn" class="flex-shrink-0 bg-gray-100 border border-gray-200 rounded-full p-2.5 hover:bg-gray-200 transition-colors">
+                    <span class="material-symbols-outlined text-gray-600">tune</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Film İçerikleri -->
         <main id="app-content"></main>
 
+        <!-- Footer -->
         <footer class="text-center mt-16 pt-8 border-t border-gray-200">
             <p class="text-gray-500 text-sm">Powered by <a href="#" class="font-medium text-gray-700 hover:text-black">@LiraKurdi</a></p>
         </footer>
     </div>
+
+    <!-- Film Detay Modalı -->
+    <div id="movie-modal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 hidden transition-opacity opacity-0">
+        <div id="modal-content" class="bg-white rounded-xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto transform scale-95 transition-transform duration-300">
+            <!-- İçerik JavaScript ile doldurulacak -->
+        </div>
+    </div>
+
+    <!-- Filtre Offcanvas Menüsü -->
+    <div id="filter-offcanvas" class="fixed top-0 right-0 h-full w-80 bg-white shadow-2xl z-50 transform translate-x-full transition-transform">
+        <div class="flex flex-col h-full">
+            <div class="flex justify-between items-center p-4 border-b">
+                <h3 class="text-lg font-medium" data-lang-text="filters">Filtreler</h3>
+                <button id="close-filter-btn" class="p-1 rounded-full hover:bg-gray-100">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <div class="p-4 flex-grow overflow-y-auto space-y-2" id="filter-genres-container">
+                <h4 class="text-sm font-bold text-gray-500 uppercase tracking-wider pb-2" data-lang-text="genre">Tür</h4>
+                <div id="filter-genres" class="space-y-1">
+                    <!-- Türler JavaScript ile doldurulacak -->
+                </div>
+            </div>
+            <div class="p-4 border-t bg-gray-50">
+                <button id="clear-filters-btn" class="w-full bg-gray-200 text-gray-800 font-medium py-2 rounded-lg hover:bg-gray-300 transition-colors" data-lang-text="clear_filters">Filtreleri Temizle</button>
+            </div>
+        </div>
+    </div>
+
 
     <script>
     document.addEventListener('DOMContentLoaded', () => {
         
         // --- UYGULAMA DURUMU (STATE) VE VERİLERİ ---
         const state = {
-            lang: localStorage.getItem('language') || 'tr',
+            lang: localStorage.getItem('language') || 'ku', // Varsayılan dil Kürtçe
             searchTerm: '',
+            activeGenres: new Set(),
+            languages: {
+                ku: { name: 'Kurdî', flag: 'https://upload.wikimedia.org/wikipedia/commons/3/35/Flag_of_Kurdistan.svg' },
+                tr: { name: 'Türkçe', flag: 'https://upload.wikimedia.org/wikipedia/commons/b/b4/Flag_of_Turkey.svg' },
+                en: { name: 'English', flag: 'https://upload.wikimedia.org/wikipedia/en/a/ae/Flag_of_the_United_Kingdom.svg' }
+            },
             movies: {
-                kurdish: [
-                    { 
-                        id: 'zer', titles: { ku: 'Zer', tr: 'Zer', en: 'Zer' }, 
-                        link: 'https://t.me/KMovie_Archive/9',
-                        descriptions: { ku: 'Jan, li New Yorkê mezin bûye, vedigere welatê xwe ji bo lêgerîna strana ku dapîra wî jê re digot.', tr: 'New York\'ta büyüyen Jan, anneannesinin ölüm döşeğinde fısıldadığı şarkının peşine düşerek memleketine geri döner.', en: 'Jan, who grew up in New York, returns to his homeland to find the song his grandmother whispered to him.' },
-                        genres: { ku: 'Drama', tr: 'Dram', en: 'Drama' }
-                    },
-                    { 
-                        id: 'kobane', titles: { ku: 'Kobanê', tr: 'Kobane', en: 'Kobane' }, 
-                        link: 'https://t.me/c/2587343787/3',
-                        descriptions: { ku: 'Çîroka berxwedana Kobanê ya li dijî DAIŞê bi çavê şervanekî jin.', tr: 'IŞİD\'e karşı verilen Kobani direnişinin bir kadın savaşçının gözünden hikayesi.', en: 'The story of the Kobani resistance against ISIS through the eyes of a female fighter.' },
-                        genres: { ku: 'Şer, Drama', tr: 'Savaş, Dram', en: 'War, Drama' }
-                    },
-                    { 
-                        id: 'turtles', titles: { ku: 'Kûsî Jî Dikarin Bifirin', tr: 'Kaplumbağalar da Uçar', en: 'Turtles Can Fly' }, 
-                        link: 'https://t.me/c/2587343787/4',
-                        descriptions: { ku: 'Li sînorê Tirkîye-Iraqê, zarokên kurd ji bo jiyanê mayînan berhev dikin.', tr: 'Türkiye-Irak sınırındaki bir mülteci kampında, mayın toplayarak hayata tutunmaya çalışan çocukların hikayesi.', en: 'The story of children trying to survive by collecting mines in a refugee camp on the Turkey-Iraq border.' },
-                        genres: { ku: 'Şer, Drama', tr: 'Savaş, Dram', en: 'War, Drama' }
-                    },
-                    { 
-                        id: 'bekas', titles: { ku: 'Bekas', tr: 'Neredesin Superman', en: 'Bekas' }, 
-                        link: 'https://t.me/c/2587343787/5',
-                        descriptions: { ku: 'Du birayên sêwî, Dana û Zana, dixwazin biçin Amerîkayê û bi Superman re bijîn.', tr: 'İki kimsesiz kardeş olan Dana ve Zana, Amerika\'ya gidip Superman ile yaşama hayali kurar.', en: 'Two orphaned brothers, Dana and Zana, dream of going to America to live with Superman.' },
-                        genres: { ku: 'Macera, Komedî', tr: 'Macera, Komedi', en: 'Adventure, Comedy' }
-                    },
-                    { 
-                        id: 'postal', titles: { ku: 'Postala Xwînî', tr: 'Kanlı Postal', en: 'Bloody Post' }, 
-                        link: 'https://t.me/c/2587343787/6',
-                        descriptions: { ku: 'Di dema şerê navxweyî yê Kurdistanê de, zarokek nameyek ji bo rêberê siyasî yê dijber dibe.', tr: 'Kürdistan\'daki iç savaş sırasında, bir çocuk muhalif siyasi lider için bir mektup taşır.', en: 'During the Kurdish civil war, a child carries a letter to the opposing political leader.' },
-                        genres: { ku: 'Drama, Şer', tr: 'Dram, Savaş', en: 'Drama, War' }
-                    },
-                    { 
-                        id: 'july14', titles: { ku: '14ê Tîrmehê', tr: '14 Temmuz', en: '14th of July' }, 
-                        link: 'https://t.me/c/2587343787/7',
-                        descriptions: { ku: 'Derbarê çalakiya greva birçîbûnê ya girtiyên kurd di zindana Amedê ya di sala 1982an de.', tr: '1982 yılında Diyarbakır Cezaevi\'ndeki Kürt tutukluların açlık grevi eylemi hakkında.', en: 'About the hunger strike action of Kurdish prisoners in Diyarbakır Prison in 1982.' },
-                        genres: { ku: 'Belgesel, Dîrok', tr: 'Belgesel, Tarih', en: 'Documentary, History' }
-                    },
+                // Film verileri burada... (önceki kodla aynı, yer kaplamaması için kısaltıldı)
+                 kurdish: [
+                    { id: 'zer', titles: { ku: 'Zer', tr: 'Zer', en: 'Zer' }, link: 'https://t.me/KMovie_Archive/9', descriptions: { ku: 'Jan, li New Yorkê mezin bûye, vedigere welatê xwe ji bo lêgerîna strana ku dapîra wî jê re digot.', tr: 'New York\'ta büyüyen Jan, anneannesinin ölüm döşeğinde fısıldadığı şarkının peşine düşerek memleketine geri döner.', en: 'Jan, who grew up in New York, returns to his homeland to find the song his grandmother whispered to him.' }, genres: { ku: 'Drama', tr: 'Dram', en: 'Drama' } },
+                    { id: 'kobane', titles: { ku: 'Kobanê', tr: 'Kobane', en: 'Kobane' }, link: 'https://t.me/c/2587343787/3', descriptions: { ku: 'Çîroka berxwedana Kobanê ya li dijî DAIŞê bi çavê şervanekî jin.', tr: 'IŞİD\'e karşı verilen Kobani direnişinin bir kadın savaşçının gözünden hikayesi.', en: 'The story of the Kobani resistance against ISIS through the eyes of a female fighter.' }, genres: { ku: 'Şer, Drama', tr: 'Savaş, Dram', en: 'War, Drama' } },
+                    { id: 'turtles', titles: { ku: 'Kûsî Jî Dikarin Bifirin', tr: 'Kaplumbağalar da Uçar', en: 'Turtles Can Fly' }, link: 'https://t.me/c/2587343787/4', descriptions: { ku: 'Li sînorê Tirkîye-Iraqê, zarokên kurd ji bo jiyanê mayînan berhev dikin.', tr: 'Türkiye-Irak sınırındaki bir mülteci kampında, mayın toplayarak hayata tutunmaya çalışan çocukların hikayesi.', en: 'The story of children trying to survive by collecting mines in a refugee camp on the Turkey-Iraq border.' }, genres: { ku: 'Şer, Drama', tr: 'Savaş, Dram', en: 'War, Drama' } },
+                    { id: 'bekas', titles: { ku: 'Bekas', tr: 'Neredesin Superman', en: 'Bekas' }, link: 'https://t.me/c/2587343787/5', descriptions: { ku: 'Du birayên sêwî, Dana û Zana, dixwazin biçin Amerîkayê û bi Superman re bijîn.', tr: 'İki kimsesiz kardeş olan Dana ve Zana, Amerika\'ya gidip Superman ile yaşama hayali kurar.', en: 'Two orphaned brothers, Dana and Zana, dream of going to America to live with Superman.' }, genres: { ku: 'Macera, Komedî', tr: 'Macera, Komedi', en: 'Adventure, Comedy' } },
+                    { id: 'postal', titles: { ku: 'Postala Xwînî', tr: 'Kanlı Postal', en: 'Bloody Post' }, link: 'https://t.me/c/2587343787/6', descriptions: { ku: 'Di dema şerê navxweyî yê Kurdistanê de, zarokek nameyek ji bo rêberê siyasî yê dijber dibe.', tr: 'Kürdistan\'daki iç savaş sırasında, bir çocuk muhalif siyasi lider için bir mektup taşır.', en: 'During the Kurdish civil war, a child carries a letter to the opposing political leader.' }, genres: { ku: 'Drama, Şer', tr: 'Dram, Savaş', en: 'Drama, War' } },
+                    { id: 'july14', titles: { ku: '14ê Tîrmehê', tr: '14 Temmuz', en: '14th of July' }, link: 'https://t.me/c/2587343787/7', descriptions: { ku: 'Derbarê çalakiya greva birçîbûnê ya girtiyên kurd di zindana Amedê ya di sala 1982an de.', tr: '1982 yılında Diyarbakır Cezaevi\'ndeki Kürt tutukluların açlık grevi eylemi hakkında.', en: 'About the hunger strike action of Kurdish prisoners in Diyarbakır Prison in 1982.' }, genres: { ku: 'Belgesel, Dîrok', tr: 'Belgesel, Tarih', en: 'Documentary, History' } },
                 ],
                 harry_potter: [
-                    { 
-                        id: 'hp1', titles: { ku: 'Harry Potter û Kevirê Felsefeyê', tr: 'Harry Potter ve Felsefe Taşı', en: 'Harry Potter and the Sorcerer\'s Stone' }, 
-                        link: '#',
-                        descriptions: { ku: 'Sêrbazekî ciwan kifş dike ku ew ji bo dibistanek sêrbaziyê ya navdar hatiye vexwendin.', tr: 'Genç bir büyücü, ünlü bir sihirbazlık okuluna davet edildiğini keşfeder.', en: 'A young wizard discovers he has been invited to a famous school of magic.' },
-                        genres: { ku: 'Fantazî', tr: 'Fantastik', en: 'Fantasy' }
-                    },
+                    { id: 'hp1', titles: { ku: 'Harry Potter û Kevirê Felsefeyê', tr: 'Harry Potter ve Felsefe Taşı', en: 'Harry Potter and the Sorcerer\'s Stone' }, link: 'https://t.me/filmizlesene07/1504', descriptions: { ku: 'Sêrbazekî ciwan kifş dike ku ew ji bo dibistanek sêrbaziyê ya navdar hatiye vexwendin.', tr: 'Genç bir büyücü, ünlü bir sihirbazlık okuluna davet edildiğini keşfeder.', en: 'A young wizard discovers he has been invited to a famous school of magic.' }, genres: { ku: 'Fantazî', tr: 'Fantastik', en: 'Fantasy' } },
+                    { id: 'hp2', titles: { ku: 'Harry Potter û Odeya Veşartî', tr: 'Harry Potter ve Sırlar Odası', en: 'Harry Potter and the Chamber of Secrets' }, link: 'https://t.me/filmizlesene07/1510', descriptions: { ku: 'Harry vedigere Hogwartsê ji bo sala xwe ya duyemîn, lê xetereyeke nû li benda wî ye.', tr: 'Harry ikinci yılı için Hogwarts\'a döner, ancak yeni bir tehlike onu beklemektedir.', en: 'Harry returns to Hogwarts for his second year, but a new danger awaits him.' }, genres: { ku: 'Fantazî', tr: 'Fantastik', en: 'Fantasy' } },
+                    { id: 'hp3', titles: { ku: 'Harry Potter û Girtiyê Azkabanê', tr: 'Harry Potter ve Azkaban Tutsağı', en: 'Harry Potter and the Prisoner of Azkaban' }, link: 'https://t.me/filmizlesene07/1517', descriptions: { ku: 'Harry fêr dibe ku girtiyekî xeternak ji Azkabanê reviyaye û li pey wî ye.', tr: 'Harry, Azkaban\'dan tehlikeli bir mahkumun kaçtığını ve peşinde olduğunu öğrenir.', en: 'Harry learns that a dangerous prisoner has escaped from Azkaban and is after him.' }, genres: { ku: 'Fantazî', tr: 'Fantastik', en: 'Fantasy' } },
+                    { id: 'hp5', titles: { ku: 'Harry Potter û Koma Zümrüdüanka', tr: 'Harry Potter ve Zümrüdüanka Yoldaşlığı', en: 'Harry Potter and the Order of the Phoenix' }, link: 'https://t.me/filmizlesene07/1551', descriptions: { ku: 'Harry û hevalên wî li dijî Voldemort û alîgirên wî komeke veşartî ava dikin.', tr: 'Harry ve arkadaşları, Voldemort ve yandaşlarına karşı gizli bir topluluk oluşturur.', en: 'Harry and his friends form a secret society to fight against Voldemort and his followers.' }, genres: { ku: 'Fantazî', tr: 'Fantastik', en: 'Fantasy' } },
+                    { id: 'hp6', titles: { ku: 'Harry Potter û Mîrzayê Melez', tr: 'Harry Potter ve Melez Prens', en: 'Harry Potter and the Half-Blood Prince' }, link: 'https://t.me/filmizlesene07/1551', descriptions: { ku: 'Harry bi alîkariya pirtûkeke razdar, li ser rabirdûya tarî ya Voldemort lêkolîn dike.', tr: 'Harry, gizemli bir kitabın yardımıyla Voldemort\'un karanlık geçmişini araştırır.', en: 'Harry investigates Voldemort\'s dark past with the help of a mysterious book.' }, genres: { ku: 'Fantazî', tr: 'Fantastik', en: 'Fantasy' } },
+                ],
+                marvel: [
+                    { id: 'im1', titles: { ku: 'Mirovê Hesin 1', tr: 'Demir Adam 1', en: 'Iron Man 1' }, link: 'https://t.me/FilmDunyas1/114', descriptions: { ku: 'Pîşesaz Tony Stark, zirxekî teknolojîk diafirîne û dibe lehengek.', tr: 'Sanayici Tony Stark, teknolojik bir zırh yaratarak bir süper kahramana dönüşür.', en: 'Industrialist Tony Stark creates a technological suit of armor and becomes a superhero.' }, genres: { ku: 'Aksiyon, Zanistî-Xeyalî', tr: 'Aksiyon, Bilim Kurgu', en: 'Action, Sci-Fi' } },
+                    { id: 'im2', titles: { ku: 'Mirovê Hesin 2', tr: 'Demir Adam 2', en: 'Iron Man 2' }, link: 'https://t.me/FilmDunyas1/117', descriptions: { ku: 'Tony Stark bi dijminên nû û bi pirsgirêkên xwe yên şexsî re rû bi rû dimîne.', tr: 'Tony Stark, yeni düşmanlar ve kendi kişisel sorunlarıyla yüzleşir.', en: 'Tony Stark faces new enemies and his own personal problems.' }, genres: { ku: 'Aksiyon, Zanistî-Xeyalî', tr: 'Aksiyon, Bilim Kurgu', en: 'Action, Sci-Fi' } },
+                    { id: 'im3', titles: { ku: 'Mirovê Hesin 3', tr: 'Demir Adam 3', en: 'Iron Man 3' }, link: 'https://t.me/FilmDunyas1/125', descriptions: { ku: 'Cîhana Tony Stark ji aliyê terorîstekî ve tê hilweşandin û ew neçar dimîne ku her tiştî ji nû ve ava bike.', tr: 'Tony Stark\'ın dünyası bir terörist tarafından yok edilir ve her şeye yeniden başlamak zorunda kalır.', en: 'Tony Stark\'s world is destroyed by a terrorist, and he must start over.' }, genres: { ku: 'Aksiyon, Zanistî-Xeyalî', tr: 'Aksiyon, Bilim Kurgu', en: 'Action, Sci-Fi' } },
+                    { id: 'av1', titles: { ku: 'Yenilmezler 1', tr: 'Yenilmezler 1', en: 'The Avengers 1' }, link: 'https://t.me/filmizlesene07/2480', descriptions: { ku: 'Lehengên herî mezin ên cîhanê ji bo rizgarkirina dinyayê tên ba hev.', tr: 'Dünyanın en büyük kahramanları, gezegeni kurtarmak için bir araya gelir.', en: 'Earth\'s mightiest heroes must come together to save the world.' }, genres: { ku: 'Aksiyon, Zanistî-Xeyalî', tr: 'Aksiyon, Bilim Kurgu', en: 'Action, Sci-Fi' } },
+                    { id: 'av2', titles: { ku: 'Yenilmezler: Serdema Ultron', tr: 'Yenilmezler: Ultron Çağı', en: 'Avengers: Age of Ultron' }, link: 'https://t.me/filmizlesene07/2492', descriptions: { ku: 'Yenilmezler li dijî îstîxbarateke çêkirî ya ku dixwaze mirovahiyê tune bike, şer dikin.', tr: 'Yenilmezler, insanlığı yok etmeye çalışan bir yapay zekaya karşı savaşır.', en: 'The Avengers fight against an artificial intelligence bent on human extinction.' }, genres: { ku: 'Aksiyon, Zanistî-Xeyalî', tr: 'Aksiyon, Bilim Kurgu', en: 'Action, Sci-Fi' } },
+                    { id: 'av3', titles: { ku: 'Yenilmezler: Şerê Bêdawî', tr: 'Yenilmezler: Sonsuzluk Savaşı', en: 'Avengers: Infinity War' }, link: 'https://t.me/filmizlesene07/2494', descriptions: { ku: 'Yenilmezler û hevalbendên wan divê her tiştî feda bikin da ku Thanosê hêzdar têk bibin.', tr: 'Yenilmezler ve müttefikleri, güçlü Thanos\'u yenmek için her şeyi feda etmelidir.', en: 'The Avengers and their allies must be willing to sacrifice all in an attempt to defeat the powerful Thanos.' }, genres: { ku: 'Aksiyon, Zanistî-Xeyalî', tr: 'Aksiyon, Bilim Kurgu', en: 'Action, Sci-Fi' } },
+                    { id: 'av4', titles: { ku: 'Yenilmezler: Endgame', tr: 'Yenilmezler: Endgame', en: 'Avengers: Endgame' }, link: 'https://t.me/filmizlesene07/2502', descriptions: { ku: 'Piştî bûyerên wêranker, gerdûn di xirabeyê de ye. Yenilmezler ji bo şerekî dawî kom dibin.', tr: 'Yıkıcı olaylardan sonra evren harabeye dönmüştür. Yenilmezler son bir savaş için toplanır.', en: 'After devastating events, the universe is in ruins. The Avengers assemble for one final stand.' }, genres: { ku: 'Aksiyon, Zanistî-Xeyalî', tr: 'Aksiyon, Bilim Kurgu', en: 'Action, Sci-Fi' } },
+                ],
+                lord_of_the_rings: [
+                    { id: 'lotr1', titles: { ku: 'Mîrê Gustîlan: Hevaltiya Gustîlê', tr: 'Yüzüklerin Efendisi: Yüzük Kardeşliği', en: 'The Lord of the Rings: The Fellowship of the Ring' }, link: 'https://t.me/filmizlesene07/1427', descriptions: { ku: 'Hobitekî ciwan û heşt hevalên wî dest bi rêwîtiyekê dikin da ku Gustîla Hêzê hilweşînin.', tr: 'Genç bir hobbit ve sekiz yoldaşı, Güç Yüzüğü\'nü yok etmek için bir yolculuğa çıkar.', en: 'A young hobbit and eight companions set out on a journey to destroy the Ring of Power.' }, genres: { ku: 'Fantazî, Macera', tr: 'Fantastik, Macera', en: 'Fantasy, Adventure' } },
+                    { id: 'lotr2', titles: { ku: 'Mîrê Gustîlan: Du Birc', tr: 'Yüzüklerin Efendisi: İki Kule', en: 'The Lord of the Rings: The Two Towers' }, link: 'https://t.me/filmizlesene07/1427', descriptions: { ku: 'Hevaltî dabeş dibe, lê lêgerîna ji bo hilweşandina Gustîlê didome.', tr: 'Kardeşlik dağılır, ancak Yüzük\'ü yok etme görevi devam eder.', en: 'The fellowship is broken, but the quest to destroy the Ring continues.' }, genres: { ku: 'Fantazî, Macera', tr: 'Fantastik, Macera', en: 'Fantasy, Adventure' } },
+                    { id: 'lotr3', titles: { ku: 'Mîrê Gustîlan: Vegera Qral', tr: 'Yüzüklerin Efendisi: Kralın Dönüşü', en: 'The Lord of the Rings: The Return of the King' }, link: 'https://t.me/filmizlesene07/1442', descriptions: { ku: 'Şerê dawî ji bo Erdê Navîn dest pê dike dema ku Frodo nêzîkî Çiyayê Qederê dibe.', tr: 'Frodo, Kıyamet Dağı\'na yaklaşırken Orta Dünya için son savaş başlar.', en: 'The final battle for Middle-earth begins as Frodo approaches Mount Doom.' }, genres: { ku: 'Fantazî, Macera', tr: 'Fantastik, Macera', en: 'Fantasy, Adventure' } },
+                    { id: 'hobbit1', titles: { ku: 'Hobbit: Rêwîtiyeke Bêhêvî', tr: 'Hobbit: Beklenmedik Yolculuk', en: 'The Hobbit: An Unexpected Journey' }, link: 'https://t.me/filmizlesene07/788', descriptions: { ku: 'Bilbo Baggins, bi komek cûceyan re diçe ku zêrên xwe ji ejderhayê Smaug vegerînin.', tr: 'Bilbo Baggins, ejderha Smaug\'dan hazinelerini geri almak için bir grup cüceye katılır.', en: 'Bilbo Baggins joins a company of dwarves to reclaim their treasure from the dragon Smaug.' }, genres: { ku: 'Fantazî, Macera', tr: 'Fantastik, Macera', en: 'Fantasy, Adventure' } },
+                    { id: 'hobbit2', titles: { ku: 'Hobbit: Wêraniya Smaug', tr: 'Hobbit: Smaug\'un Çorak Toprakları', en: 'The Hobbit: The Desolation of Smaug' }, link: 'https://t.me/filmizlesene07/790', descriptions: { ku: 'Cûce û Bilbo rêwîtiya xwe ya ber bi Çiyayê Tenêtî ve didomînin.', tr: 'Cüceler ve Bilbo, Yalnız Dağ\'a doğru yolculuklarına devam eder.', en: 'The dwarves and Bilbo continue their journey to the Lonely Mountain.' }, genres: { ku: 'Fantazî, Macera', tr: 'Fantastik, Macera', en: 'Fantasy, Adventure' } },
+                    { id: 'hobbit3', titles: { ku: 'Hobbit: Şerê Pênc Artêşan', tr: 'Hobbit: Beş Ordunun Savaşı', en: 'The Hobbit: The Battle of the Five Armies' }, link: 'https://t.me/filmizlesene07/792', descriptions: { ku: 'Şerekî epîk dest pê dike dema ku pênc artêş ji bo kontrola Çiyayê Tenêtî şer dikin.', tr: 'Beş ordu Yalnız Dağ\'ın kontrolü için savaşırken epik bir savaş başlar.', en: 'An epic battle ensues as five armies fight for control of the Lonely Mountain.' }, genres: { ku: 'Fantazî, Macera', tr: 'Fantastik, Macera', en: 'Fantasy, Adventure' } },
+                ],
+                animation: [
+                     { id: 'ice1', titles: { ku: 'Serdema Qeşayê 1', tr: 'Buz Devri 1', en: 'Ice Age 1' }, link: 'https://t.me/filmizlesene07/1258', descriptions: { ku: 'Di Serdema Qeşayê de, sê heywanên neçaverêkirî ji bo vegerandina zarokekî mirovî dibin yek.', tr: 'Buzul Çağı\'nda, beklenmedik üç hayvan, bir insan bebeğini ailesine geri götürmek için bir araya gelir.', en: 'In the Ice Age, three unlikely animals team up to return a human baby to its family.' }, genres: { ku: 'Anîmasyon, Komedî', tr: 'Animasyon, Komedi', en: 'Animation, Comedy' } },
+                     { id: 'ice2', titles: { ku: 'Serdema Qeşayê 2: Helîn', tr: 'Buz Devri 2: Erime Başlıyor', en: 'Ice Age: The Meltdown' }, link: 'https://t.me/filmizlesene07/1262', descriptions: { ku: 'Hevalên me vedigerin da ku ji lehiyek mezin a ku ji ber helîna qeşayê çêdibe, birevin.', tr: 'Dostlarımız, eriyen buzulların neden olduğu büyük bir selden kaçmak için geri döner.', en: 'Our friends return to escape a massive flood caused by melting glaciers.' }, genres: { ku: 'Anîmasyon, Komedî', tr: 'Animasyon, Komedi', en: 'Animation, Comedy' } },
+                     { id: 'ice3', titles: { ku: 'Serdema Qeşayê 3: Şafaka Dînozoran', tr: 'Buz Devri 3: Dinozorların Şafağı', en: 'Ice Age: Dawn of the Dinosaurs' }, link: 'https://t.me/filmizlesene07/1264', descriptions: { ku: 'Sid dînozorekî dibîne û hevalên wî divê wî ji cîhanek veşartî ya di binê erdê de xilas bikin.', tr: 'Sid bir dinozor bulur ve arkadaşları onu yeraltındaki gizli bir dünyadan kurtarmak zorundadır.', en: 'Sid finds a dinosaur, and his friends must rescue him from a hidden world underground.' }, genres: { ku: 'Anîmasyon, Komedî', tr: 'Animasyon, Komedi', en: 'Animation, Comedy' } },
+                     { id: 'ice4', titles: { ku: 'Serdema Qeşayê 4: Parzemîn Dilerizin', tr: 'Buz Devri 4: Kıtalar Ayrılıyor', en: 'Ice Age: Continental Drift' }, link: 'https://t.me/filmizlesene07/1276', descriptions: { ku: 'Parçebûna parzemînan hevalên me ji malbatên wan vediqetîne û ew bi deryavanên korsan re rû bi rû dimînin.', tr: 'Kıtaların ayrılması dostlarımızı ailelerinden ayırır ve korsanlarla karşılaşırlar.', en: 'The continental drift separates our friends from their families, and they encounter pirates.' }, genres: { ku: 'Anîmasyon, Komedî', tr: 'Animasyon, Komedi', en: 'Animation, Comedy' } },
+                     { id: 'ice5', titles: { ku: 'Serdema Qeşayê 5: Lihevketina Mezin', tr: 'Buz Devri 5: Büyük Çarpışma', en: 'Ice Age: Collision Course' }, link: 'https://t.me/filmizlesene07/1278', descriptions: { ku: 'Scrat bi xeletî zincîreyek bûyerên kozmîk dide destpêkirin ku cîhanê tehdîd dike.', tr: 'Scrat yanlışlıkla dünyayı tehdit eden bir dizi kozmik olayı tetikler.', en: 'Scrat accidentally triggers a series of cosmic events that threaten the world.' }, genres: { ku: 'Anîmasyon, Komedî', tr: 'Animasyon, Komedi', en: 'Animation, Comedy' } },
+                     { id: 'icexmas', titles: { ku: 'Serdema Qeşayê: Noelê Mamut', tr: 'Buz Devri: Bir Yılbaşı Macerası', en: 'Ice Age: A Mammoth Christmas' }, link: 'https://t.me/filmizlesene07/1280', descriptions: { ku: 'Sid bi xeletî kevneşopiyên Noelê yên Manny xera dike û diçe Cemsera Bakur da ku tiştan rast bike.', tr: 'Sid yanlışlıkla Manny\'nin Noel geleneklerini mahveder ve işleri düzeltmek için Kuzey Kutbu\'na gider.', en: 'Sid accidentally ruins Manny\'s Christmas traditions and travels to the North Pole to fix things.' }, genres: { ku: 'Anîmasyon, Komedî', tr: 'Animasyon, Komedi', en: 'Animation, Comedy' } },
+                ],
+                classics: [
+                    { id: 'greenmile', titles: { ku: 'Rêya Kesk', tr: 'Yeşil Yol', en: 'The Green Mile' }, link: 'https://t.me/filmizlesene07/1365', descriptions: { ku: 'Jiyana cerdevanekî girtîgehê piştî hevdîtina bi girtiyekî ku xwedî hêzên serwerî ye, diguhere.', tr: 'Doğaüstü güçlere sahip bir mahkumla tanıştıktan sonra bir hapishane gardiyanının hayatı değişir.', en: 'A prison guard\'s life is changed after meeting an inmate with supernatural powers.' }, genres: { ku: 'Drama, Fantazî', tr: 'Dram, Fantastik', en: 'Drama, Fantasy' } },
+                    { id: 'forrestgump', titles: { ku: 'Forrest Gump', tr: 'Forrest Gump', en: 'Forrest Gump' }, link: 'https://t.me/filmdiziizle1/100', descriptions: { ku: 'Çîroka jiyana awarte ya mirovekî bi IQ-ya kêm lê bi dilpakî.', tr: 'Düşük IQ\'lu ama iyi kalpli bir adamın olağanüstü hayat hikayesi.', en: 'The extraordinary life story of a man with a low IQ but a good heart.' }, genres: { ku: 'Drama, Komedî', tr: 'Dram, Komedi', en: 'Drama, Comedy' } },
+                    { id: 'scarface', titles: { ku: 'Rûyê Birîn', tr: 'Yaralı Yüz', en: 'Scarface' }, link: 'https://t.me/filmdiziizle1/107', descriptions: { ku: 'Penaberekî Kubayî li Miami-yê împaratoriyek narkotîkê ava dike.', tr: 'Kübalı bir mülteci, Miami\'de bir uyuşturucu imparatorluğu kurar.', en: 'A Cuban refugee builds a drug empire in Miami.' }, genres: { ku: 'Sûc, Drama', tr: 'Suç, Dram', en: 'Crime, Drama' } },
+                    { id: 'godfather1', titles: { ku: 'Bav 1', tr: 'Baba 1', en: 'The Godfather 1' }, link: 'https://t.me/filmizlesene07/1337', descriptions: { ku: 'Patronê malbatek mafyayê ya bi hêz, kontrola împaratoriya xwe ya veşartî dide kurê xwe yê nexwestî.', tr: 'Güçlü bir mafya ailesinin reisi, gizli imparatorluğunun kontrolünü isteksiz oğluna devreder.', en: 'The aging patriarch of a powerful crime family transfers control of his clandestine empire to his reluctant son.' }, genres: { ku: 'Sûc, Drama', tr: 'Suç, Dram', en: 'Crime, Drama' } },
+                    { id: 'godfather2', titles: { ku: 'Bav 2', tr: 'Baba 2', en: 'The Godfather Part II' }, link: 'https://t.me/filmizlesene07/1341', descriptions: { ku: 'Jiyana destpêkê ya Vito Corleone li New Yorkê û bilindbûna kurê wî Michael wekî serokê nû yê mafyayê.', tr: 'Vito Corleone\'nin New York\'taki erken yaşamı ve oğlu Michael\'ın yeni mafya babası olarak yükselişi.', en: 'The early life of Vito Corleone in New York and his son Michael\'s rise as the new mob boss.' }, genres: { ku: 'Sûc, Drama', tr: 'Suç, Dram', en: 'Crime, Drama' } },
+                    { id: 'godfather3', titles: { ku: 'Bav 3', tr: 'Baba 3', en: 'The Godfather Part III' }, link: 'https://t.me/filmizlesene07/1350', descriptions: { ku: 'Michael Corleone yê pîr, hewl dide ku malbata xwe ji cîhana sûcê dûr bixe û serkêşekî guncaw bibîne.', tr: 'Yaşlanan Michael Corleone, ailesini suç dünyasından uzaklaştırmaya ve uygun bir varis bulmaya çalışır.', en: 'An aging Michael Corleone seeks to legitimize his family and find a suitable successor.' }, genres: { ku: 'Sûc, Drama', tr: 'Suç, Dram', en: 'Crime, Drama' } },
+                ],
+                other: [
+                    { id: 'superhero', titles: { ku: 'Fîlmê Superleheng', tr: 'Süper Kahraman', en: 'Superhero Movie' }, link: 'https://t.me/filmizlesene07/2264', descriptions: { ku: 'Parodiyek fîlmên superlehengan, bi taybetî Spider-Man.', tr: 'Süper kahraman filmlerinin, özellikle Örümcek Adam\'ın bir parodisi.', en: 'A parody of superhero films, particularly Spider-Man.' }, genres: { ku: 'Komedî', tr: 'Komedi', en: 'Comedy' } },
+                    { id: 'tinder', titles: { ku: 'Nêçîrvanê Tinderê', tr: 'Tinder Avcısı', en: 'The Tinder Swindler' }, link: 'https://t.me/FilmDunyas1/180', descriptions: { ku: 'Çîroka rastîn a xapînokekî ku bi riya Tinderê jinan dixapîne.', tr: 'Tinder üzerinden kadınları dolandıran bir sahtekarın gerçek hikayesi.', en: 'The true story of a conman who swindled women through Tinder.' }, genres: { ku: 'Belgesel, Sûc', tr: 'Belgesel, Suç', en: 'Documentary, Crime' } },
+                    { id: 'cakallar', titles: { ku: 'Reqis bi Çeqelan re', tr: 'Çakallarla Dans', en: 'Dancing with Jackals' }, link: 'https://t.me/filmizlesene07/73', descriptions: { ku: 'Çar hevalên ku ji ber deynên xwe di tengasiyê de ne, hewl didin ku bi awayekî hêsan pere qezenc bikin.', tr: 'Borçları yüzünden başları dertte olan dört arkadaş, kolay yoldan para kazanmaya çalışır.', en: 'Four friends in trouble due to their debts try to make easy money.' }, genres: { ku: 'Komedî', tr: 'Komedi', en: 'Comedy' } },
                 ]
             },
             translations: {
-                ku: { page_title: "K Movie - Platforma Fîlman", search_placeholder: "Li fîlman bigere...", kurdish_thema_movies: "Fîlmên Temaya Kurdî", harry_potter_series: "Rêzefîlma Harry Potter", coming_soon: "PÊŞ DE", no_results_title: "Fîlmek nehat dîtin.", no_results_desc: "Ji kerema xwe peyveke din biceribînin." },
-                tr: { page_title: "K Movie - Film Platformu", search_placeholder: "Film, dizi ve daha fazlasını arayın", kurdish_thema_movies: "Kürtçe Temalı Filmler", harry_potter_series: "Harry Potter Serisi", coming_soon: "YAKINDA", no_results_title: "Aramanızla eşleşen sonuç bulunamadı.", no_results_desc: "Lütfen farklı bir anahtar kelimeyle tekrar deneyin." },
-                en: { page_title: "K Movie - Movie Platform", search_placeholder: "Search for movies, series & more", kurdish_thema_movies: "Kurdish Themed Movies", harry_potter_series: "Harry Potter Series", coming_soon: "COMING SOON", no_results_title: "No results found for your search.", no_results_desc: "Please try again with a different keyword." }
+                ku: { page_title: "K Movie - Platforma Fîlman", search_placeholder: "Li fîlman bigere...", kurdish_thema_movies: "Fîlmên Temaya Kurdî", harry_potter_series: "Rêzefîlma Harry Potter", marvel_universe: "Gerdûna Marvel", lotr_saga: "Destana Mîrê Gustîlan", animations: "Anîmasyon", classics: "Klasîk", other_movies: "Fîlmên Din", no_results_title: "Fîlmek nehat dîtin.", no_results_desc: "Ji kerema xwe peyveke din biceribînin an jî fîlteran paqij bikin.", watch_on_telegram: "Li ser Telegramê Temaşe Bike", genre: "Cure", description: "Danasîn", filters: "Parzûn", clear_filters: "Parzûnan Paqij Bike" },
+                tr: { page_title: "K Movie - Film Platformu", search_placeholder: "Film, dizi ve daha fazlasını arayın", kurdish_thema_movies: "Kürtçe Temalı Filmler", harry_potter_series: "Harry Potter Serisi", marvel_universe: "Marvel Evreni", lotr_saga: "Yüzüklerin Efendisi Destanı", animations: "Animasyonlar", classics: "Klasikler", other_movies: "Diğer Filmler", no_results_title: "Aramanızla eşleşen sonuç bulunamadı.", no_results_desc: "Lütfen farklı bir anahtar kelimeyle tekrar deneyin veya filtreleri temizleyin.", watch_on_telegram: "Telegram'da İzle", genre: "Tür", description: "Açıklama", filters: "Filtreler", clear_filters: "Filtreleri Temizle" },
+                en: { page_title: "K Movie - Movie Platform", search_placeholder: "Search for movies, series & more", kurdish_thema_movies: "Kurdish Themed Movies", harry_potter_series: "Harry Potter Series", marvel_universe: "Marvel Universe", lotr_saga: "The Lord of the Rings Saga", animations: "Animations", classics: "Classics", other_movies: "Other Movies", no_results_title: "No results found for your search.", no_results_desc: "Please try again with a different keyword or clear the filters.", watch_on_telegram: "Watch on Telegram", genre: "Genre", description: "Description", filters: "Filters", clear_filters: "Clear Filters" }
             },
             categoryMap: {
                 kurdish: 'kurdish_thema_movies',
-                harry_potter: 'harry_potter_series'
+                harry_potter: 'harry_potter_series',
+                marvel: 'marvel_universe',
+                lord_of_the_rings: 'lotr_saga',
+                animation: 'animations',
+                classics: 'classics',
+                other: 'other_movies'
             }
         };
 
         const swiperInstances = [];
 
-        // --- HTML OLUŞTURMA FONKSİYONLARI (BİLEŞENLER) ---
+        // --- HTML OLUŞTURMA FONKSİYONLARI ---
 
-        function createMovieCard(movie) {
+        function createMovieCard(movie, categoryKey) {
             const { lang } = state;
-            const isAvailable = movie.link !== '#';
             const title = movie.titles[lang] || movie.titles.en;
-            const description = movie.descriptions[lang] || movie.descriptions.en;
-            const genre = movie.genres[lang] || movie.genres.en;
 
             return `
-                <div class="swiper-slide h-auto">
-                    <a href="${isAvailable ? movie.link : '#'}" ${isAvailable ? 'target="_blank"' : ''} class="movie-card flex flex-col h-full bg-white rounded-lg border border-gray-200/80 p-4 transition-all duration-300 hover:shadow-md hover:border-gray-300 relative ${!isAvailable ? 'pointer-events-none' : ''}">
-                        <div class="flex-grow">
-                            <span class="text-xs font-medium text-[var(--accent-color)] bg-[var(--accent-bg-color)] px-2 py-0.5 rounded-full self-start mb-2 inline-block">${genre}</span>
-                            <h3 class="text-base font-bold text-gray-800 truncate mb-1">${title}</h3>
-                            <p class="text-sm text-gray-600 line-clamp-3">${description}</p>
+                <div class="swiper-slide">
+                    <div class="movie-card group flex flex-col h-full bg-white rounded-lg border border-gray-200/80 overflow-hidden transition-all duration-300 hover:shadow-xl hover:border-gray-300 cursor-pointer" data-movie-id="${movie.id}" data-category-key="${categoryKey}">
+                        <div class="aspect-[2/3] w-full bg-gray-200 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-gray-400 text-5xl group-hover:scale-110 transition-transform">theaters</span>
                         </div>
-                        ${!isAvailable ? `<div class="absolute top-0 left-0 w-full h-full rounded-lg flex items-center justify-center bg-white/75 backdrop-blur-sm text-sm font-semibold text-gray-800">${state.translations[lang].coming_soon}</div>` : ''}
-                    </a>
+                        <div class="p-3 flex-grow">
+                            <h3 class="text-sm font-bold text-gray-800 line-clamp-2 h-10">${title}</h3>
+                        </div>
+                    </div>
                 </div>
             `;
         }
@@ -189,13 +268,15 @@
         function createCategorySection(categoryKey, movies) {
             const { lang } = state;
             const categoryTitle = state.translations[lang][state.categoryMap[categoryKey]];
-            const movieCardsHTML = movies.map(createMovieCard).join('');
+            const movieCardsHTML = movies.map(movie => createMovieCard(movie, categoryKey)).join('');
 
             return `
-                <section class="movie-category mb-10">
+                <section class="movie-category mb-12">
                     <h2 class="text-xl md:text-2xl font-bold text-gray-800 mb-4">${categoryTitle}</h2>
-                    <div class="swiper">
-                        <div class="swiper-wrapper">${movieCardsHTML}</div>
+                    <div class="relative md:px-8"> <!-- Butonlar için mobil dışı boşluk -->
+                        <div class="swiper">
+                            <div class="swiper-wrapper">${movieCardsHTML}</div>
+                        </div>
                         <div class="swiper-button-next"></div>
                         <div class="swiper-button-prev"></div>
                     </div>
@@ -215,7 +296,7 @@
         
         // --- ANA RENDER FONKSİYONU ---
         function render() {
-            const { lang, searchTerm, movies } = state;
+            const { lang, searchTerm, movies, activeGenres } = state;
             const appContent = document.getElementById('app-content');
             
             swiperInstances.forEach(swiper => swiper.destroy(true, true));
@@ -227,10 +308,14 @@
 
             for (const categoryKey in movies) {
                 const filteredMovies = movies[categoryKey].filter(movie => {
-                    const title = (movie.titles[lang] || movie.titles.en).toLowerCase();
-                    const description = (movie.descriptions[lang] || movie.descriptions.en).toLowerCase();
-                    const genre = (movie.genres[lang] || movie.genres.en).toLowerCase();
-                    return title.includes(lowerCaseSearchTerm) || description.includes(lowerCaseSearchTerm) || genre.includes(lowerCaseSearchTerm);
+                    const title = (movie.titles.tr || movie.titles.en).toLowerCase();
+                    const description = (movie.descriptions.tr || movie.descriptions.en).toLowerCase();
+                    const searchMatch = title.includes(lowerCaseSearchTerm) || description.includes(lowerCaseSearchTerm);
+
+                    const movieGenres = new Set((movie.genres.en || '').split(',').map(g => g.trim()));
+                    const genreMatch = activeGenres.size === 0 || [...activeGenres].some(ag => movieGenres.has(ag));
+
+                    return searchMatch && genreMatch;
                 });
 
                 if (filteredMovies.length > 0) {
@@ -239,55 +324,254 @@
                 }
             }
             
-            appContent.innerHTML = (totalMatches === 0 && lowerCaseSearchTerm) ? createNoResultsView() : finalHTML;
+            appContent.innerHTML = (totalMatches === 0 && (searchTerm || activeGenres.size > 0)) ? createNoResultsView() : finalHTML;
             
             updateStaticUI();
             
-            document.querySelectorAll('#app-content .swiper').forEach(el => {
+            document.querySelectorAll('.swiper').forEach(el => {
                 swiperInstances.push(new Swiper(el, {
-                    slidesPerView: 'auto',
+                    slidesPerView: 1.5, // Mobil için 1.5 kart göster
                     spaceBetween: 16,
-                    navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
-                     breakpoints: {
-                        640: { slidesPerView: 2, spaceBetween: 20 },
-                        768: { slidesPerView: 3, spaceBetween: 20 },
-                        1024: { slidesPerView: 4, spaceBetween: 24 }
+                    navigation: { 
+                        nextEl: el.parentElement.querySelector('.swiper-button-next'), 
+                        prevEl: el.parentElement.querySelector('.swiper-button-prev') 
+                    },
+                    breakpoints: {
+                        640: { slidesPerView: 2.5, spaceBetween: 20 },
+                        768: { slidesPerView: 3.5, spaceBetween: 20 },
+                        1024: { slidesPerView: 4.5, spaceBetween: 24 },
+                        1280: { slidesPerView: 5.5, spaceBetween: 24 }
                     }
                 }));
             });
         }
+
+        function renderFilterPanel() {
+            const { lang, movies, activeGenres } = state;
+            const filterGenresContainer = document.getElementById('filter-genres');
+            
+            const allGenres = new Set();
+            Object.values(movies).flat().forEach(movie => {
+                (movie.genres.en || '').split(',').map(g => g.trim()).forEach(genre => {
+                    if(genre) allGenres.add(genre);
+                });
+            });
+
+            const translatedGenres = [...allGenres].map(enGenre => {
+                 let translated = enGenre;
+                 for (const category in movies) {
+                     const movie = movies[category].find(m => m.genres.en.includes(enGenre));
+                     if (movie && movie.genres[lang]) {
+                         const enIndex = movie.genres.en.split(',').map(g=>g.trim()).indexOf(enGenre);
+                         const langGenres = movie.genres[lang].split(',').map(g=>g.trim());
+                         if(langGenres[enIndex]) {
+                            translated = langGenres[enIndex];
+                            break;
+                         }
+                     }
+                 }
+                 return { en: enGenre, translated: translated };
+            }).sort((a, b) => a.translated.localeCompare(b.translated, lang));
+
+            let genresHTML = '';
+            translatedGenres.forEach(({en, translated}) => {
+                const isActive = activeGenres.has(en);
+                genresHTML += `
+                    <button class="genre-toggle w-full flex items-center justify-between text-left px-3 py-2.5 rounded-lg transition-colors text-gray-700 ${isActive ? 'bg-blue-50 font-semibold' : 'hover:bg-gray-100'}" data-genre-en="${en}">
+                        <span>${translated}</span>
+                        ${isActive ? '<span class="material-symbols-outlined text-lg text-blue-600">check_circle</span>' : '<span class="material-symbols-outlined text-lg text-gray-300">radio_button_unchecked</span>'}
+                    </button>
+                `;
+            });
+            filterGenresContainer.innerHTML = genresHTML;
+        }
         
         // --- UI GÜNCELLEME VE OLAY DİNLEYİCİLERİ ---
         function updateStaticUI() {
-            const { lang } = state;
+            const { lang, languages } = state;
             document.documentElement.lang = lang;
             document.title = state.translations[lang].page_title;
             document.querySelector('#searchInput').placeholder = state.translations[lang].search_placeholder;
             
-            document.querySelectorAll('#language-switcher button').forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.langBtn === lang);
+            // Dil dropdown'ını güncelle
+            const dropdownToggle = document.getElementById('language-dropdown-toggle');
+            const dropdownMenu = document.getElementById('language-dropdown-menu');
+            const selectedLang = languages[lang];
+
+            dropdownToggle.innerHTML = `
+                <img src="${selectedLang.flag}" alt="${selectedLang.name}" class="w-5 h-auto rounded-sm">
+                <span class="text-sm font-medium hidden md:block">${selectedLang.name}</span>
+                <span class="material-symbols-outlined text-gray-500 text-lg">expand_more</span>
+            `;
+            
+            dropdownMenu.innerHTML = Object.keys(languages).map(key => {
+                const isSelected = key === lang;
+                return `
+                    <a href="#" class="flex items-center gap-3 px-4 py-2 text-sm ${isSelected ? 'bg-gray-100 text-gray-900' : 'text-gray-700'} hover:bg-gray-100" data-lang-btn="${key}">
+                        <img src="${languages[key].flag}" alt="${languages[key].name}" class="w-5 h-auto rounded-sm">
+                        <span>${languages[key].name}</span>
+                    </a>
+                `;
+            }).join('');
+
+            document.querySelectorAll('[data-lang-text]').forEach(el => {
+                const key = el.dataset.langText;
+                if (state.translations[lang][key]) {
+                    el.textContent = state.translations[lang][key];
+                }
             });
         }
 
+        // --- MODAL İŞLEVLERİ ---
+        function openModal(movieId, categoryKey) {
+            const movie = state.movies[categoryKey].find(m => m.id === movieId);
+            if (!movie) return;
+
+            const { lang } = state;
+            const modal = document.getElementById('movie-modal');
+            const modalContent = document.getElementById('modal-content');
+
+            const title = movie.titles[lang] || movie.titles.en;
+            const description = movie.descriptions[lang] || movie.descriptions.en;
+            const genre = movie.genres[lang] || movie.genres.en;
+
+            modalContent.innerHTML = `
+                <div class="p-6">
+                    <div class="flex justify-between items-start mb-4">
+                        <h2 class="text-2xl font-bold">${title}</h2>
+                        <button id="modal-close-btn" class="p-1 rounded-full hover:bg-gray-100 -mr-2 -mt-2">
+                            <span class="material-symbols-outlined">close</span>
+                        </button>
+                    </div>
+                    <div class="space-y-4 text-gray-700">
+                        <div>
+                            <h4 class="font-semibold text-sm text-gray-500 mb-1 uppercase tracking-wider">${state.translations[lang].genre}</h4>
+                            <p>${genre}</p>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-sm text-gray-500 mb-1 uppercase tracking-wider">${state.translations[lang].description}</h4>
+                            <p>${description}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 p-4 rounded-b-xl border-t">
+                    <a href="${movie.link}" target="_blank" class="flex items-center justify-center w-full text-center bg-[var(--accent-color)] text-white font-medium py-3 rounded-lg hover:bg-blue-700 transition-colors">
+                        <span class="material-symbols-outlined mr-2">play_circle</span>
+                        ${state.translations[lang].watch_on_telegram}
+                    </a>
+                </div>
+            `;
+            
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modalContent.classList.remove('scale-95');
+            }, 10);
+
+            document.getElementById('modal-close-btn').addEventListener('click', closeModal);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('movie-modal');
+            const modalContent = document.getElementById('modal-content');
+            modal.classList.add('opacity-0');
+            modalContent.classList.add('scale-95');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+        }
+
+        // --- FİLTRE & DROPDOWN İŞLEVLERİ ---
         function setupEventListeners() {
-            document.getElementById('language-switcher').addEventListener('click', (e) => {
-                const newLang = e.target.closest('button')?.dataset.langBtn;
+            const dropdown = document.getElementById('language-dropdown');
+            const dropdownToggle = document.getElementById('language-dropdown-toggle');
+            const dropdownMenu = document.getElementById('language-dropdown-menu');
+
+            // Dil dropdown'ını aç/kapat
+            dropdownToggle.addEventListener('click', () => {
+                const isHidden = dropdownMenu.classList.contains('hidden');
+                if (isHidden) {
+                    dropdownMenu.classList.remove('hidden');
+                    setTimeout(() => {
+                        dropdownMenu.classList.remove('opacity-0', '-translate-y-2');
+                    }, 10);
+                } else {
+                    dropdownMenu.classList.add('opacity-0', '-translate-y-2');
+                    setTimeout(() => {
+                        dropdownMenu.classList.add('hidden');
+                    }, 300);
+                }
+            });
+
+            // Dışarı tıklayınca dropdown'ı kapat
+            window.addEventListener('click', (e) => {
+                if (!dropdown.contains(e.target)) {
+                    dropdownMenu.classList.add('opacity-0', '-translate-y-2');
+                    setTimeout(() => dropdownMenu.classList.add('hidden'), 300);
+                }
+            });
+
+            // Dil seçimi
+            dropdownMenu.addEventListener('click', (e) => {
+                e.preventDefault();
+                const newLang = e.target.closest('a')?.dataset.langBtn;
                 if (newLang && newLang !== state.lang) {
                     state.lang = newLang;
                     localStorage.setItem('language', newLang);
                     render();
+                    renderFilterPanel();
                 }
             });
 
+            // Arama
             document.getElementById('searchInput').addEventListener('input', (e) => {
                 state.searchTerm = e.target.value;
                 render();
+            });
+
+            // Film kartına tıklama
+            document.getElementById('app-content').addEventListener('click', (e) => {
+                const card = e.target.closest('.movie-card');
+                if (card) {
+                    const { movieId, categoryKey } = card.dataset;
+                    openModal(movieId, categoryKey);
+                }
+            });
+
+            // Modal kapatma
+            document.getElementById('movie-modal').addEventListener('click', (e) => {
+                if (e.target.id === 'movie-modal') closeModal();
+            });
+
+            // Filtre menüsü açma/kapama
+            document.getElementById('filter-btn').addEventListener('click', () => document.getElementById('filter-offcanvas').classList.remove('translate-x-full'));
+            document.getElementById('close-filter-btn').addEventListener('click', () => document.getElementById('filter-offcanvas').classList.add('translate-x-full'));
+
+            // Filtre türlerine tıklama
+            document.getElementById('filter-genres').addEventListener('click', (e) => {
+                const button = e.target.closest('.genre-toggle');
+                if (button) {
+                    const genre = button.dataset.genreEn;
+                    if (state.activeGenres.has(genre)) {
+                        state.activeGenres.delete(genre);
+                    } else {
+                        state.activeGenres.add(genre);
+                    }
+                    render();
+                    renderFilterPanel();
+                }
+            });
+
+            // Filtreleri temizleme
+            document.getElementById('clear-filters-btn').addEventListener('click', () => {
+                state.activeGenres.clear();
+                render();
+                renderFilterPanel();
             });
         }
         
         // --- UYGULAMAYI BAŞLAT ---
         setupEventListeners();
-        render(); // İlk render
+        render();
+        renderFilterPanel();
     });
     </script>
 </body>
